@@ -1,8 +1,6 @@
 require("dotenv").config();
 const https = require("https");
 const fs = require("fs");
-const fileWriteMp4 = fs.createWriteStream("file.mp4");
-const fileWriteGif = fs.createWriteStream("file.gif");
 
 const TelegramBot = require("node-telegram-bot-api");
 const bot = new TelegramBot(process.env.API_KEY, {polling: true});
@@ -28,20 +26,24 @@ bot.on("message", async msg => {
                 return document.querySelector(".player").dataset.source + ".mp4"
               }
               case "gifx": {
-                return document.querySelector(".player").dataset.source
+                return document.querySelector(".player").dataset.source.replace(".gif", ".mp4W")
               }
             }
           }).then(data => {
+            browser.close();
               if (data?.length) {
-                https.get(data, async (resp) => {
-                  await browser.close();
-                  if (data.indexOf(".mp4") !== -1) {
-                    resp.pipe(fileWriteMp4);
-                    bot.sendMessage(chatId, "Отправка").then(() => bot.sendVideo(chatId, "file.mp4"));
-                  } else {
-                    resp.pipe(fileWriteGif);
-                    bot.sendMessage(chatId, "Отправка").then(() => bot.sendAnimation(chatId, "file.gif"));
-                  }
+                bot.sendVideo(chatId, data).catch(() => {
+                  https.get(data, async (resp) => {
+                    if (data.indexOf(".mp4") !== -1) {
+                      const fileWriteMp4 = fs.createWriteStream("file.mp4");
+                      resp.pipe(fileWriteMp4);
+                      bot.sendMessage(chatId, "Отправка").then(() => setTimeout(() => bot.sendVideo(chatId, "file.mp4"), 3000));
+                    } else {
+                      const fileWriteGif = fs.createWriteStream("file.webm");
+                      resp.pipe(fileWriteGif);
+                      bot.sendMessage(chatId, "Отправка").then(() => setTimeout(() => bot.sendVideo(chatId, "file.webm"), 3000));
+                    }
+                  })
                 })
               } else {
                 bot.sendMessage(chatId, "Кажется, в посте нет видео! Попробуйте другой пост");
