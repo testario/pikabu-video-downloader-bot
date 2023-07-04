@@ -1,0 +1,20 @@
+{
+  "name": "pikabu-download-video-bot",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "node main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "node-telegram-bot-api": "^0.61.0",
+    "puppeteer": "^20.7.4",
+    "user-agents": "^1.0.1429"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.29.3"
+  }
+}
