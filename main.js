@@ -26,7 +26,7 @@ bot.on("message", async msg => {
                 return document.querySelector(".player").dataset.source + ".mp4"
               }
               case "gifx": {
-                return document.querySelector(".player").dataset.source.replace(".gif", ".mp4W")
+                return document.querySelector(".player").dataset.source.replace(".gif", ".mp4")
               }
             }
           }).then(data => {
